@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>mapmove.png</file>
+        <file>../../../浏览器文件/control.png</file>
+        <file>landmark.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>del.png</file>
+        <file>add.png</file>
+        <file>car.png</file>
+        <file>robot.png</file>
+        <file>clamp.png</file>
+        <file>nav.png</file>
+        <file>ip.png</file>
+    </qresource>
+</RCC>

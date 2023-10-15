@@ -1,0 +1,13 @@
+INPUT(
+./debug\cJSON.o
+./debug\car.o
+./debug\communicate_test.o
+./debug\main.o
+./debug\mainwindow.o
+./debug\map_read.o
+./debug\qcustomplot.o
+./debug\moc_car_test.o
+./debug\moc_communicate_test.o
+./debug\moc_mainwindow.o
+./debug\moc_qcustomplot.o
+);

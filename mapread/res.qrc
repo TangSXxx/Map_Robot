@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/add.png</file>
+        <file>res/car.png</file>
+        <file>res/clamp.png</file>
+        <file>res/control.png</file>
+        <file>res/del.png</file>
+        <file>res/ip.png</file>
+        <file>res/landmark.png</file>
+        <file>res/mapmove.png</file>
+        <file>res/nav.png</file>
+        <file>res/robot.png</file>
+    </qresource>
+</RCC>
