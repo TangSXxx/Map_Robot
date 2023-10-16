@@ -21,7 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->widget->setInteraction(QCP::iRangeDrag, true); //鼠标单击拖动
     ui->widget->setInteraction(QCP::iRangeZoom, true); //滚轮滑动缩放
-    //ui->widget->setSelectionRectMode(QCP::srmSelect);
+    ui->widget->setInteraction(QCP::iSelectPlottables,true);
+    ui->widget->setInteraction(QCP::iSelectItems ,true);
     ui->widget->setSelectionRectMode(QCP::SelectionRectMode::srmSelect);
     ui->widget->selectionRect()->setPen(QPen(Qt::black,1,Qt::DashLine));
     ui->widget->selectionRect()->setBrush(QBrush(QColor(0,0,100,50)));
@@ -98,6 +99,7 @@ void MainWindow::paintmap(){
     ui->widget->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ScatterShape::ssSquare, 0.4));
     ui->widget->graph(0)->addData(x,y);
     ui->widget->graph(0)->setAdaptiveSampling(true);
+    ui->widget->graph(0)->setSelectable(QCP::stMultipleDataRanges);
     int mark_num=map.Mymarks.size();
     for(int i=0;i<mark_num;i++)
     {
