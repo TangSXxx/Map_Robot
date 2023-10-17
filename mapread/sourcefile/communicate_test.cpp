@@ -33,38 +33,62 @@ void MapThread::disconnectMap(int num){
 QString MapThread::recv_data()
 {
     map_tcp->waitForReadyRead();
-    QByteArray message = map_tcp->readAll();
-    int size = message.size();
+     QByteArray message = map_tcp->readAll();
+     int size = message.size();
+     qDebug()<<size;
 
-    if(size > 0){
-        char a0 = message.at(0);
+     if(size > 0){
+         //组合上一个包剩下的数据
+         //message = _brokenMessage + message;
+         //_brokenMessage.clear();
 
-        if (uint8_t(a0) == '{'){
+         //char a0 = message.at(0);
+         if (message.contains("\"sender_name\": \"3\", \"message\": \"x")){
+             qDebug()<<"等待到{";
+             //qDebug()<<QString::fromStdString(message.mid(0,500).toStdString());
+                while (!message.contains("path")) {
+                    qDebug()<<"等待}";
+                     _lastMessage = message;
+                     message.clear();
+                     map_tcp->waitForReadyRead();
+                     message = map_tcp->readAll();
+                     message = _lastMessage + message;
+                 }
+                 //截取}后面的数据区数据.
 
-               while (!message.contains('}')) {
-                    _lastMessage = message;
-                    message.clear();
-                    map_tcp->waitForReadyRead();
-                    message = map_tcp->readAll();
-                    message = _lastMessage + message;
+                while(true){
+                     int start = message.indexOf("{\"sender_name\": \"3\", \"message\": \"x");
+                     if(start == -1){
+                         return "";
+                     }
+                     int tmp = message.indexOf('}',start);
+                     QByteArray check_message = message.mid(start,tmp+1-start);
+                     message = message.mid(tmp+1);
+                     if(check_message.contains("path")){
+                         _lastMessage.clear();
+                         QString json_string = QString(check_message);
+                         qDebug()<<"start:"+json_string.left(200);
+                         qDebug()<<"end:"+json_string.right(200);
+                         return json_string;
+                     }
+
                 }
-                    //截取报头16位后面的数据区数据.
-                    _lastMessage.clear();
 
-                    QString json_string = QString(message);
-                    return json_string;
-        }else{
-            //报头数据错误.
-            qDebug()<<"error!帧首不对";
-            return 0;
-        }
-    }
+                //_brokenMessage = message.mid(message.indexOf('}')+1);
 
-    return 0;
+         }else{
+             //报头数据错误.
+             qDebug()<<"error!帧首不对";
+             return 0;
+         }
+     }
+
+
+     return 0;
 }
 
 void MapThread::Recv_loop(){
-    loop_timer->start(200);
+    loop_timer->start(300);
     write_data("{\"type\": \"login\",\"name\": \"0\"}");
     connect(loop_timer,&QTimer::timeout,this,[=](){
         m_car->map_str = recv_data();

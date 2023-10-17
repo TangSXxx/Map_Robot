@@ -58,7 +58,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_mousePressEvent(QMouseEvent *event)
 {//鼠标单击事件
-   qDebug()<<"1234";
+
 }
 
 
@@ -226,8 +226,6 @@ void MainWindow::timerEvent(QTimerEvent *event)
         carpose->bottomRight->setCoords(map.cur_pose.x+r, map.cur_pose.y-r);*/
 
 
-        map.car_matrix.rotate(map.car_yaw/3.1415926*180+90);
-        map.carimage=map.carimage.transformed(map.car_matrix, Qt::SmoothTransformation);
         QCPItemPixmap *carimage = new QCPItemPixmap(ui->widget);
         carimage->setPixmap(map.carimage);
         carimage->topLeft->setCoords(map.cur_pose.x-0.1,map.cur_pose.y+0.2);
@@ -349,7 +347,7 @@ void MainWindow::on_clamp_control_clicked()
         float distance=ui->clamp_distance->text().toFloat();
         float height = ui->clamp_height->text().toFloat();
 
-        QFile file("C:\\dhblab_meta_socket\\storage\\devices\\_2.txt");
+        QFile file("C:\\dhblab_meta_socket\\storage\\devices\\unicast_3.txt");
         if (!file.open(QFile::WriteOnly | QFile::Text)) {
             qDebug() << "can't open error!";
             return ;

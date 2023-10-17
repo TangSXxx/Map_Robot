@@ -23,12 +23,10 @@ map_read::map_read()
 {
     size_x=0;
     size_y=0;
-    origin_x=0;
-    origin_y=0;
+    origin_x=-4.140558;
+    origin_y=-11.01;
     cur_pose.x=0;
     cur_pose.y=0;
-    lastcur_pose.x=0;
-    lastcur_pose.y=0;
     x_left= -3;
     x_right = 5;
     y_left= -5;
@@ -73,8 +71,7 @@ void map_read::get_size()
             this->size_y=yValue.toInt()*0.02;
         }
     }
-    //this->origin_x=0;
-    //this->origin_y=0;
+
     this->origin_x=-4.140558;
     this->origin_y=-11.01;
 }
@@ -585,14 +582,14 @@ void map_read::Remove_obstacles(double x1, double y1,double x2,double y2)
 {
     x1=x1-origin_x;
     x2=x2-origin_x;
-    y1=y1-origin_y;
-    y2=y2-origin_y;
+    y1=-(y1+2.8)-origin_y;
+    y2=-(y2+2.8)-origin_y;
     x1=int(x1/0.02);
     x2=int(x2/0.02);
     y1=int(y1/0.02);
     y2=int(y2/0.02);
     qDebug() << x1<< y1<<x2<<y2;
-    if(x2>x1&&y2>y1&&x1>=0&&y1>=0&&x2<=this->size_x/0.02&&y2<=this->size_y/0.02)
+    if(x2>x1 && y2>y1 &&x1>=0 && y1>=0 && x2<=this->size_x/0.02 && y2<=this->size_y/0.02)
     {
         double v_double_x = 0.0;
         double v_double_y = 0.0;
@@ -695,7 +692,7 @@ void map_read::txt_to_vectordouble1(QString pathname)
                         {
                             cur_pose.y=user_data1[3].toDouble();
                             qDebug() << "cur_pose.y"<<user_data1[1].toDouble();
-                            lastcur_pose=cur_pose;
+
                         }
                         else if(i==5)
                         {
@@ -717,7 +714,7 @@ void map_read::txt_to_vectordouble1(QString pathname)
                             }
                         }
                  }
-                lastv_point=v_point;
+
                 if(path_place!=0)
                 {
                     user_data2=in.right(in.size()-path_place-5).split(" ");
@@ -737,12 +734,10 @@ void map_read::txt_to_vectordouble1(QString pathname)
 
                      }
                 }
-                lastpath_point = path_point;
+
             }
             else{
-                cur_pose = lastcur_pose;
-                v_point=lastv_point;
-                path_point = lastpath_point;
+                qDebug() << "错误的";
             }
     }
 }
@@ -772,7 +767,7 @@ bool map_read::pose_nav(double x,double y,double yaw)
 }
 bool map_read::pose_nav(double x1,double y1,double yaw1,double x2,double y2,double yaw2)
 {
-    QFile file("C:\\dhblab_meta_socket\\storage\\devices\\_2.txt");
+    QFile file("C:\\dhblab_meta_socket\\storage\\devices\\_3.txt");
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         qDebug() << "can't open error!";
         return false;

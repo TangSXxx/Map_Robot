@@ -41,6 +41,7 @@ signals:
 private:
     car_test* m_car;     //维护仙工车对象
     QByteArray _lastMessage;
+    QByteArray _brokenMessage;
 
 };
 

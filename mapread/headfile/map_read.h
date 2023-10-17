@@ -45,7 +45,6 @@ public:
     double size_x;
     double size_y;
     MyPoint cur_pose;
-    MyPoint lastcur_pose;
     MyPoint nav_endpose;
     int sum_plot;
     double origin_x;
@@ -62,8 +61,6 @@ public:
     QVector <MyMark> Mymarks;
     QVector <MyPath> Mypaths;
     QVector <MyPoint> v_point;
-    QVector <MyPoint> lastv_point;
-    QVector <MyPoint> lastpath_point;
     bool find_path(QString start_mark,QString end_mark);
     MyPath mark_path(QString start_mark,QString end_mark);
     void get_size();
