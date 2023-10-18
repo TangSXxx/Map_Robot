@@ -65,13 +65,32 @@ void MainWindow::on_mousePressEvent(QMouseEvent *event)
 
 void MainWindow::on_pushButton_clicked()
 {
-        QString mark = ui->lineEdit->text();
-        map.get_json();
-        map.get_size();
-        map.get_mark();
-        map.get_path();
-        map.Remove_mark(mark);
-        paintmap();
+      QList<QCPAbstractItem*> selectedItem = ui->widget->selectedItems();
+      if(!ui->lineEdit->text().isEmpty())
+      {
+          QString mark = ui->lineEdit->text();
+          map.get_json();
+          map.get_size();
+          map.get_mark();
+          map.get_path();
+          map.Remove_mark(mark);
+          paintmap();
+      }
+      else if(!selectedItem.isEmpty())
+      {
+
+          foreach (QCPAbstractItem* item, selectedItem) {
+             QCPItemText* textItem = qobject_cast<QCPItemText*>(item);
+             QString name = textItem->text();
+             map.Remove_mark(name);
+          }
+          paintmap();
+      }
+      else
+      {
+          qDebug()<<"没有输入";
+      }
+
 
 }
 
@@ -111,7 +130,6 @@ void MainWindow::paintmap(){
         textLabel->setFont(QFont("Microsoft YaHei", 10, QFont::Bold)); //字体大小
         textLabel->setPen(QPen(Qt::green,1,Qt::DashDotDotLine)); //边框颜色
         textLabel->setPadding(QMargins(12,12,12,12));//文字距离边框几个像素
-
         textLabel->setSelectable(true);
         //qDebug() << "instanceName = " <<map.Mymarks[i].instanceName ;
         //qDebug() << " x = " <<map.Mymarks[i].x/map.size_x<<" y = "<<map.Mymarks[i].y/map.size_y;
@@ -188,17 +206,72 @@ void MainWindow::on_pushButton_4_clicked()
 }
 
 void MainWindow::on_pushButton_5_clicked()
-{
+{         
 
-    double x1=ui->lineEdit_9->text().toDouble();
-    double y1=ui->lineEdit_10->text().toDouble();
-    double x2=ui->lineEdit_11->text().toDouble();
-    double y2=ui->lineEdit_12->text().toDouble();
-    map.get_json();
-    map.get_size();
-    map.get_mark();
-    map.Remove_obstacles(x1,y1,x2,y2);
-    paintmap();
+    if(!ui->lineEdit_9->text().isEmpty()&&!ui->lineEdit_10->text().isEmpty()&&!ui->lineEdit_11->text().isEmpty()&&!ui->lineEdit_12->text().isEmpty())
+    {
+        double x1=ui->lineEdit_9->text().toDouble();
+        double y1=ui->lineEdit_10->text().toDouble();
+        double x2=ui->lineEdit_11->text().toDouble();
+        double y2=ui->lineEdit_12->text().toDouble();
+        map.get_json();
+        map.get_size();
+        map.get_mark();
+        map.Remove_obstacles(x1,y1,x2,y2);
+        paintmap();
+    }
+    else if(ui->widget->graph(0)->selected())
+    {
+        QCPDataSelection selection = ui->widget->graph(0)->selection();
+        double minX ;
+        double minY ;
+        double maxX ;
+        double maxY ;
+        bool first =true;
+        for(int j=0;j<selection.dataRangeCount();j++)
+        {
+            QCPDataRange dataRange = selection.dataRange(j);
+
+            for(int k=dataRange.begin();k<dataRange.end();k++)
+            {
+               double x = ui->widget->graph(0)->data()->at(k)->key;
+               double y = ui->widget->graph(0)->data()->at(k)->value;
+               if(first)
+               {
+                    minX = x;
+                    minY = y;
+                    maxX = x;
+                    maxY = y;
+                    first = false;
+               }
+               else
+               {
+                   if (x < minX) {
+                       minX = x;
+                   }
+                   if (y < minY) {
+                       minY = y;
+                   }
+                   if (x > maxX) {
+                       maxX = x;
+                   }
+                   if (y > maxY) {
+                       maxY = y;
+                   }
+
+               }
+
+            }
+        }
+        qDebug()<<"minX"<<minX<<"minY"<<minY<<"maxX"<<maxX<<"maxY"<<maxY<<endl;
+        map.Remove_obstacles(minX-0.1,minY-0.1,maxX+0.1,maxY+0.1);
+        paintmap();
+    }
+    else
+    {
+        qDebug()<<"输入为空"<<endl;
+    }
+
 }
 
 /*void MainWindow::on_pushButton_6_clicked()
@@ -376,4 +449,14 @@ void MainWindow::on_nav_clicked()
 void MainWindow::on_ip_button_clicked()
 {
     ui->interaction->setCurrentIndex(4);
+}
+
+void MainWindow::on_test_clicked()
+{
+   QList<QCPAbstractItem*> selectedItem = ui->widget->selectedItems(); // 获取已选择的图形项
+   foreach (QCPAbstractItem* item, selectedItem) {
+      QCPItemText* textItem = qobject_cast<QCPItemText*>(item);
+      QString name = textItem->text();
+     qDebug()<<"name"<<name;
+   }
 }

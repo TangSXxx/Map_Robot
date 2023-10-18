@@ -588,8 +588,12 @@ void map_read::Remove_obstacles(double x1, double y1,double x2,double y2)
     x2=int(x2/0.02);
     y1=int(y1/0.02);
     y2=int(y2/0.02);
-    qDebug() << x1<< y1<<x2<<y2;
-    if(x2>x1 && y2>y1 &&x1>=0 && y1>=0 && x2<=this->size_x/0.02 && y2<=this->size_y/0.02)
+    qDebug() <<"x1"<< x1<<"y1"<< y1<<"x2"<<x2<<"y2"<<y2;
+
+    //if(x2>x1 && y2>y1 &&x1>=0 && y1>=0 && x2<=this->size_x/0.02 && y2<=this->size_y/0.02)
+
+
+    if(x2>x1 && y1>y2)
     {
         double v_double_x = 0.0;
         double v_double_y = 0.0;
@@ -614,7 +618,7 @@ void map_read::Remove_obstacles(double x1, double y1,double x2,double y2)
 
                         v_double_y = yValue.toDouble();
                         y = v_double_y;
-                        if(x>=x1&&x<=x2&&y>=y1&&y<=y2)
+                        if(x>=x1&&x<=x2&&y<=y1&&y>=y2)
                         {
                             flag++;
                             xyArray.removeAt(i);

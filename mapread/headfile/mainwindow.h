@@ -54,5 +54,6 @@ private slots:
     void on_clamp_clicked();
     void on_nav_clicked();
     void on_ip_button_clicked();
+    void on_test_clicked();
 };
 #endif // MAINWINDOW_H
