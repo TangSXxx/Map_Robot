@@ -9,7 +9,6 @@
 #include <qhostaddress.h>
 #include <QtEndian>
 #include <QTcpSocket>
-#include "XStateClient.h"
 #include "car_test.h"
 #include <QTimer>
 

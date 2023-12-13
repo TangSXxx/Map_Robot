@@ -42,19 +42,22 @@ public:
     bool online = false;
     map_read();
     ~map_read();
+    QString map_name;
+    QString tcp_message;
     double size_x;
     double size_y;
     MyPoint cur_pose;
-    MyPoint nav_endpose;
+
     int sum_plot;
     double origin_x;
     double origin_y;
     double x_left,x_right,y_left,y_right;
     bool map_move;
+
+
     double car_yaw;
     QPixmap carimage;
     QMatrix car_matrix;
-    //cJSON* m_cjsonStr;
     QJsonDocument m_doc;
     QVector <MyPoint> Mypoints;
     QVector <MyPoint> path_point;   
@@ -73,11 +76,11 @@ public:
     void Remove_path(QString start_mark,QString end_mark);
     void Remove_mark(QString Mark);
     void Remove_obstacles(double x1,double y1,double x2,double y2);
-    void txt_to_vectordouble1(QString pathname);
     void car_pose();
     bool pose_nav(double x,double y,double yaw);
     bool pose_nav(double x1,double y1,double yaw1,double x2,double y2,double yaw2);
     bool mark_nav(QString mark1,QString mark2,double yaw1,double yaw2);
+    void change_map(QString Map_name);
 };
 
 #endif // MAP_READ_H

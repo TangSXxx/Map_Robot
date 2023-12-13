@@ -27,14 +27,16 @@ SOURCES += sourcefile/main.cpp \
     sourcefile/communicate_test.cpp \
     sourcefile/mainwindow.cpp \
     sourcefile/map_read.cpp \
-    sourcefile/qcustomplot.cpp
+    sourcefile/qcustomplot.cpp \
+    sourcefile/car_tcp.cpp
 
 HEADERS +=  headfile/mainwindow.h \
     headfile/cJSON.h \
     headfile/car_test.h \
     headfile/communicate_test.h \
     headfile/map_read.h \
-    headfile/qcustomplot.h
+    headfile/qcustomplot.h \
+    headfile/car_tcp.h
 
 FORMS += \
     mainwindow.ui

@@ -10,5 +10,17 @@
         <file>res/mapmove.png</file>
         <file>res/nav.png</file>
         <file>res/robot.png</file>
+        <file>res/map.png</file>
+        <file>res/delete.png</file>
+        <file>res/dmap.png</file>
+        <file>res/greenLight.png</file>
+        <file>res/path.png</file>
+        <file>res/redLight.png</file>
+        <file>res/RobotIcon.png</file>
+        <file>res/site.png</file>
+        <file>res/continue.png</file>
+        <file>res/set.png</file>
+        <file>res/stop.png</file>
+        <file>res/NewIP.png</file>
     </qresource>
 </RCC>

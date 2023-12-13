@@ -15583,7 +15583,6 @@ void QCustomPlot::mousePressEvent(QMouseEvent *event)
   // save some state to tell in releaseEvent whether it was a click:
   mMouseHasMoved = false;
   mMousePressPos = event->pos();
-  qDebug()<<"2234";
   
   if (mSelectionRect && mSelectionRectMode != QCP::srmNone)
   {

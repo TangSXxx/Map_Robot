@@ -13,6 +13,7 @@
 #include<QFileDialog>
 #include <QTime>
 #include <mutex>
+#include <QThread>
 
 #define file_topdir  "./"
 #define FILENAME "..//mapfile//lxmap.json"
@@ -32,12 +33,13 @@ map_read::map_read()
     y_left= -5;
     y_right = 5;
     map_move = false;
-    //cJSON* m_cjsonStr=NULL;
-    carimage.load("C:/WWCC/upper_computer/qt_mapread/mapread/car.png");
+    carimage.load("C:/Users/wwcc/Desktop/car.png");
     carimage=carimage.scaled(40,40);
     car_matrix.rotate(90);
     carimage=carimage.transformed(car_matrix, Qt::SmoothTransformation);
     car_yaw=0;
+    map_name = "..//mapfile//lxmap.json";
+
 }
 
 void map_read::get_car(car_test* car){
@@ -48,6 +50,13 @@ map_read::~map_read()
 {
     //cJSON_Delete(this->m_cjsonStr);
 }
+
+
+
+void map_read::change_map(QString Map_name){
+  this->map_name = Map_name;
+}
+
 
 void map_read::get_size()
 {
@@ -81,7 +90,7 @@ void map_read::get_size()
 void map_read::get_json()
 {
 
-    QFile file(FILENAME);
+    QFile file(map_name);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         qDebug() << "can't open error!";
         return;
@@ -372,7 +381,7 @@ void map_read::add_path(QString start_mark,QString end_mark)
             rootObj["advancedCurveList"] = advancedCurveListArray;
 
             m_doc.setObject(rootObj);
-            QFile file(FILENAME);
+            QFile file(map_name);
             if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
                 qDebug() << "can't open error!";
                 return;
@@ -441,7 +450,7 @@ void map_read::Remove_path(QString start_mark, QString end_mark)
                     advancedCurveListArray.removeAt(i);
                     rootObj["advancedCurveList"] = advancedCurveListArray;
                     m_doc.setObject(rootObj);
-                    QFile writeFile(FILENAME);
+                    QFile writeFile(map_name);
                     if (!writeFile.open(QFile::WriteOnly | QFile::Truncate)) {
                         qDebug() << "can't open error!";
                         return;
@@ -499,7 +508,7 @@ void map_read::add_mark(QString Mark,float x,float y)
             Mymarks.push_back(mark);
             qDebug() << "成功写入站点："<< Mark;
             m_doc.setObject(rootObj);
-            QFile file(FILENAME);
+            QFile file(map_name);
             if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
                 qDebug() << "can't open error!";
                 return;
@@ -545,7 +554,7 @@ void map_read::Remove_mark(QString Mark)
                     flag++;
 
                     m_doc.setObject(rootObj);
-                    QFile writeFile(FILENAME);
+                    QFile writeFile(map_name);
                     if (!writeFile.open(QFile::WriteOnly | QFile::Truncate)) {
                         qDebug() << "can't open error!";
                         return;
@@ -629,7 +638,7 @@ void map_read::Remove_obstacles(double x1, double y1,double x2,double y2)
                 rootObj["normalPosList"]=xyArray;
                 qDebug() << "修改"<<flag;
                 m_doc.setObject(rootObj);
-                QFile writeFile(FILENAME);
+                QFile writeFile(map_name);
                 if (!writeFile.open(QFile::WriteOnly | QFile::Truncate)) {
                     qDebug() << "can't open error!";
                     return;
@@ -651,7 +660,9 @@ void map_read::Remove_obstacles(double x1, double y1,double x2,double y2)
     get_size();
 }
 
-void map_read::txt_to_vectordouble1(QString pathname)
+
+
+void map_read::car_pose()
 {
     v_point.clear();
     path_point.clear();
@@ -663,21 +674,13 @@ void map_read::txt_to_vectordouble1(QString pathname)
 
     if(online)
     {
-        QString str=m_car->map_str;
-        QJsonParseError jsonError;
-        QJsonDocument doc = QJsonDocument::fromJson(str.toUtf8(), &jsonError);
-        if (jsonError.error != QJsonParseError::NoError && !doc.isNull()) {
-            qDebug() << "Json格式错误！" << jsonError.error;
-            return;
-        }
-        QJsonObject rootObj = doc.object();
-        QJsonValue messageValue = rootObj.value("message");
-            in=messageValue.toString();
+            in = this->tcp_message;
+            //qDebug()<<"in: "<<in;
             int path_place = in.indexOf(" path");
             int x_place = in.indexOf("x");
             int y_place = in.indexOf("y");
             int laser_place = in.indexOf("laser");
-            qDebug()<<"x_place: "<<x_place<<"laser_place: "<<laser_place<<"path_place: "<<path_place;
+            //qDebug()<<"x_place: "<<x_place<<"laser_place: "<<laser_place<<"path_place: "<<path_place;
             if(path_place!=-1 && x_place!=-1 && y_place!=-1 && laser_place!=-1)
             {
                 user_data1=in.left(path_place).split(" ");
@@ -690,18 +693,18 @@ void map_read::txt_to_vectordouble1(QString pathname)
                         if(i==1)
                         {
                             cur_pose.x=user_data1[1].toDouble();
-                            qDebug() << "cur_pose.x"<<user_data1[0].toDouble();
+                           //qDebug() << "cur_pose.x"<<user_data1[1].toDouble();
                         }
                         else if(i==3)
                         {
                             cur_pose.y=user_data1[3].toDouble();
-                            qDebug() << "cur_pose.y"<<user_data1[1].toDouble();
+                            //qDebug() << "cur_pose.y"<<user_data1[3].toDouble();
 
                         }
                         else if(i==5)
                         {
                             car_yaw=user_data1[5].toDouble();
-                            qDebug() << "car_yaw"<<car_yaw;
+                            //qDebug() << "car_yaw"<<car_yaw;
                             i++;
                         }
                         else
@@ -741,21 +744,13 @@ void map_read::txt_to_vectordouble1(QString pathname)
 
             }
             else{
-                qDebug() << "错误的";
+                //qDebug() << "错误的";
             }
     }
 }
 
-
-
-void map_read::car_pose()
-{
-    txt_to_vectordouble1("C:\\dhblab_meta_socket\\storage\\devices\\_3.txt");
-}
-
 bool map_read::pose_nav(double x,double y,double yaw)
 {
-    //QFile file("C:\\dhblab_meta_socket\\storage\\devices\\_2.txt");
     QFile file("C:\\dhblab_meta_socket\\storage\\devices\\unicast_3.txt");
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         qDebug() << "can't open error!";
@@ -764,9 +759,7 @@ bool map_read::pose_nav(double x,double y,double yaw)
     QTextStream out(&file);
     QDateTime time = QDateTime::currentDateTime();
     QString time_s =time .toString("hh:mm:ss.zzz");
-    nav_endpose.x = x;
-    nav_endpose.y = y;
-    out<<"pose"<<" "<<x<<" "<<y<<" "<<yaw<<" "<<time_s;
+    out<<"pose"<<" "<<x<<" "<<y<<" "<<yaw<<" "<<time_s;  
     return true;
 }
 bool map_read::pose_nav(double x1,double y1,double yaw1,double x2,double y2,double yaw2)
@@ -796,14 +789,14 @@ bool map_read::mark_nav(QString mark_s,QString mark_e,double yaw1,double yaw2)
     }
     MyPath path;
     path=mark_path(mark_s,mark_e);
-    if(pose_nav(path.start.x,path.start.y,yaw1,path.end.x,path.end.y,yaw2))
+    if(fabs(cur_pose.x-path.start.x)>0.2||fabs(cur_pose.y-path.start.y)>0.2)
     {
-        return true;
+       qDebug() << "path.start.x"<<path.start.x<<"path.start.y"<<path.start.y;
+       pose_nav(path.start.x,path.start.y,yaw1);
+       QThread::msleep(1000);
     }
-    else
-    {
-        return false;
-    }
+    pose_nav(path.end.x,path.end.y,yaw2);
+
 }
 
 

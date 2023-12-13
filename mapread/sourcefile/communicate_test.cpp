@@ -109,6 +109,7 @@ void MainWindow::connect_thread(int num, car_test *car){
     //连接相关
     connect(amr[num],&car_test::ConnectMap,mapthread[num],&MapThread::connectMap);
     connect(amr[num],&car_test::DisconnectSend,mapthread[num],&MapThread::disconnectMap);
+
     connect(mapthread[num],&MapThread::Stop_thread,this,&MainWindow::delete_thread);
     connect(mapthread[num],&MapThread::connect_OK,this,&MainWindow::success_connect);
 
